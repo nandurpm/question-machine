@@ -45,3 +45,42 @@ This repository is Render-ready. Create a Node Web Service with build command `n
 ## Privacy and scope
 
 The default mode sends no student answer to an AI provider. Browser-local progress can be reset at any time. The shipped questions are educational seed content; the application does not claim syllabus grounding until an approved source/resource layer is added.
+
+<!-- clear-use-guide -->
+## Clear use guide
+
+### Install
+
+Use Node.js 22 or newer, clone this repository, and install its dependencies:
+
+```bash
+git clone https://github.com/nandurpm/question-machine.git
+cd question-machine
+npm install
+```
+
+### Open it locally
+
+Start the local web/report server:
+
+```bash
+npm start
+```
+
+Then open the URL printed by the terminal. The production report hosts use http://localhost:4080 unless a different PORT value is set. To choose another port, use PORT=5050 npm start on Linux/macOS or set PORT=5050 && npm start in Windows Command Prompt.
+
+
+### Use the hosted version
+
+**Live URL:** [https://question-machine.onrender.com](https://question-machine.onrender.com)
+
+The hosted version is a browser-friendly report or application view. It runs on Render’s free tier, so the first request after inactivity can take longer while the instance starts.
+
+### Windows and Linux
+
+The same Node.js commands work in Windows PowerShell, Windows Command Prompt, and a Linux terminal. Use the platform-specific port command above only when you need a non-default local port.
+
+### Important scope
+
+This project follows its existing local-first and read-only boundaries. Demo/report content is generated or supplied through the documented local workflow; a hosted page does not provide hidden access to your device, private files, hardware, accounts, or network.
+

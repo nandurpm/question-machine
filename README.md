@@ -38,7 +38,9 @@ npm test
 
 ## Deployment
 
-This repository is Render-ready. Create a Node Web Service with build command `npm install` and start command `npm start`; the server binds to `0.0.0.0:$PORT`. Add the optional NVIDIA variables in Render’s secret environment-variable interface after deployment. The live deployment URL will be added here once verified.
+This repository is Render-ready. Create a Node Web Service with build command `npm install` and start command `npm start`; the server binds to `0.0.0.0:$PORT`. Add the optional NVIDIA variables in Render’s secret environment-variable interface after deployment.
+
+**Live application:** [https://question-machine.onrender.com](https://question-machine.onrender.com)
 
 ## Privacy and scope
 

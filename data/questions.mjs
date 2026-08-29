@@ -1,3 +1,10 @@
+/*
+ * ============================================================
+ * FILE: questions.mjs
+ * PURPOSE: Defines the curated question records and evaluation metadata served by Question Machine.
+ * ============================================================
+ */
+
 export const questions = [
   { id: 'voltage-unit', concept: 'Voltage', branch: 'Fundamentals', type: 'multiple_choice', difficulty: 1, prompt: 'What is the SI unit of voltage?', options: ['Ohm', 'Ampere', 'Volt', 'Watt'], answer: 'Volt', explanation: 'Voltage is electrical potential difference and is measured in volts (V).', hints: ['It is named after Alessandro Volta.', 'Its symbol is V.'], next: 'current-meaning' },
   { id: 'current-meaning', concept: 'Current', branch: 'Fundamentals', type: 'true_false', difficulty: 1, prompt: 'Electric current is measured in amperes.', answer: 'True', explanation: 'Current is the rate of flow of electric charge; its SI unit is the ampere (A).', hints: ['Think about the unit marked A on a multimeter.'], next: 'ohms-law' },

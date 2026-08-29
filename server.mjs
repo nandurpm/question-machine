@@ -1,3 +1,10 @@
+/*
+ * ============================================================
+ * FILE: server.mjs
+ * PURPOSE: Runs Question Machine's local HTTP server and exposes the question and answer-evaluation endpoints used by the browser client.
+ * ============================================================
+ */
+
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize } from 'node:path';

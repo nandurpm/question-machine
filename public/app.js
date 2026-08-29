@@ -1,3 +1,10 @@
+/*
+ * ============================================================
+ * FILE: app.js
+ * PURPOSE: Implements the browser interaction flow for loading questions, submitting answers, and displaying evaluation feedback.
+ * ============================================================
+ */
+
 const $ = (selector) => document.querySelector(selector);
 const state = { questions: [], concepts: [], index: 0, mode: 'deep', attempts: JSON.parse(localStorage.getItem('question-machine:attempts') || '{}'), streak: 0, hint: 0 };
 const labels = { correct: ['Correct', '✓'], partially_correct: ['Developing', '≈'], incorrect: ['Needs revision', '!'], needs_review: ['Needs review', '?'] };

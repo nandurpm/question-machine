@@ -1,3 +1,10 @@
+/*
+ * ============================================================
+ * FILE: evaluator.test.mjs
+ * PURPOSE: Exercises Question Machine's domain behavior, validation, persistence, reporting, and safety boundaries with the Node.js test runner.
+ * ============================================================
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { questions } from '../data/questions.mjs';

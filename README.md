@@ -84,3 +84,21 @@ The same Node.js commands work in Windows PowerShell, Windows Command Prompt, an
 
 This project follows its existing local-first and read-only boundaries. Demo/report content is generated or supplied through the documented local workflow; a hosted page does not provide hidden access to your device, private files, hardware, accounts, or network.
 
+## Project structure
+
+| Path | Responsibility |
+|---|---|
+| [`data/`](data/README.md) | Contains the curated question dataset consumed by Question Machine's server and tests. |
+| [`lib/`](lib/README.md) | Contains reusable server-side evaluation logic shared by Question Machine's request handlers and tests. |
+| [`public/`](public/README.md) | Contains the static browser client served by Question Machine's local HTTP server. |
+| [`tests/`](tests/README.md) | Contains automated regression tests for Question Machine's public behavior and important safety constraints. |
+
+Important root files include `package.json` for supported commands, `run-local.sh` and `run-local.cmd` where present for platform launchers, and this README as the primary developer entry point.
+
+## Documentation map
+
+- [`data/README.md`](data/README.md) — Contains the curated question dataset consumed by Question Machine's server and tests.
+- [`lib/README.md`](lib/README.md) — Contains reusable server-side evaluation logic shared by Question Machine's request handlers and tests.
+- [`public/README.md`](public/README.md) — Contains the static browser client served by Question Machine's local HTTP server.
+- [`tests/README.md`](tests/README.md) — Contains automated regression tests for Question Machine's public behavior and important safety constraints.
+

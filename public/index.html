@@ -1,4 +1,11 @@
 <!doctype html>
+<!--
+============================================================
+FILE: index.html
+PURPOSE: Provides Question Machine's browser document, controls, and accessible result regions.
+============================================================
+-->
+
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Question Machine is an interactive learning tree that helps students answer, understand, and go deeper."><title>Question Machine | Learn deeper by answering</title><link rel="stylesheet" href="/styles.css"></head>
 <body><div class="app-shell"><aside class="tree-panel" aria-label="Knowledge tree"><div class="brand"><span class="brand-mark">Q</span><span><strong>QUESTION<br>MACHINE</strong><small>Learn deeper by answering.</small></span></div><div class="topic-block"><label for="topicSelect">Learning topic</label><select id="topicSelect"><option>Electricity</option><option>Basic Electronics</option><option>Ohm's Law</option></select><p class="topic-note">Deterministic Electricity foundation path</p></div><nav id="tree" class="knowledge-tree" aria-label="Concept progress"></nav><div class="tree-legend"><span><i class="legend-dot strong"></i>Strong</span><span><i class="legend-dot developing"></i>Developing</span><span><i class="legend-dot review"></i>Needs review</span><span><i class="legend-dot current"></i>Current</span></div></aside>
 <main class="workspace"><header class="topbar"><button id="menuButton" class="icon-button" aria-label="Open learning map">☰</button><div class="mode-switch" aria-label="Study mode"><button class="mode active" data-mode="deep">Deep</button><button class="mode" data-mode="quick">Quick</button><button class="mode" data-mode="exam">Exam</button></div><div class="top-status"><span id="aiStatus" class="status-chip">Deterministic mode</span><button id="resetButton" class="text-button">Reset session</button></div></header>

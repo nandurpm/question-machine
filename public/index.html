@@ -3,17 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Question Machine — Massive Question Bank, Adaptive Learning Platform, Exam Generator, and Engineering Knowledge System.">
-  <title>Question Machine | Massive Question Bank & Exam Generator</title>
+  <meta name="description" content="Question Machine is an adaptive engineering practice and exam-generation platform with transparent answer feedback.">
+  <meta name="theme-color" content="#07111f">
+  <title>Question Machine | Adaptive Engineering Practice</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
   <div class="app-shell">
     <!-- Knowledge & Subject Taxonomy Sidebar -->
-    <aside class="tree-panel" aria-label="Engineering Taxonomy & Knowledge Tree">
-      <div class="brand">
-        <span class="brand-mark">Q</span>
-        <span><strong>QUESTION<br>MACHINE</strong><small>Engineering Knowledge System</small></span>
+    <aside id="taxonomyPanel" class="tree-panel" aria-label="Engineering Taxonomy & Knowledge Tree">
+      <div class="brand-row">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">Q</span>
+          <span><strong>QUESTION<br>MACHINE</strong><small>Engineering Knowledge System</small></span>
+        </div>
+        <button id="treeCloseButton" class="icon-button tree-close" type="button" aria-label="Close taxonomy panel">×</button>
       </div>
 
       <div class="topic-block">
@@ -22,7 +27,7 @@
           <option value="">All Departments</option>
         </select>
 
-        <label for="subjectSelect" style="margin-top: 10px;">Subject / Module</label>
+        <label class="subject-label" for="subjectSelect">Subject / Module</label>
         <select id="subjectSelect">
           <option value="">All Subjects</option>
         </select>
@@ -39,28 +44,29 @@
         <span><i class="legend-dot current"></i>Active</span>
       </div>
     </aside>
+    <button id="panelBackdrop" class="panel-backdrop hidden" type="button" aria-label="Close taxonomy panel"></button>
 
     <!-- Main Workspace -->
-    <main class="workspace">
+    <main id="mainContent" class="workspace" tabindex="-1">
       <header class="topbar">
-        <button id="menuButton" class="icon-button" aria-label="Open taxonomy panel">☰</button>
+        <button id="menuButton" class="icon-button" type="button" aria-label="Open taxonomy panel" aria-controls="taxonomyPanel" aria-expanded="false">☰</button>
         <div class="mode-switch" aria-label="Study mode">
-          <button class="mode active" data-mode="deep">Deep</button>
-          <button class="mode" data-mode="quick">Quick</button>
-          <button class="mode" data-mode="exam">Exam Generator</button>
-          <button class="mode" data-mode="analytics">Analytics</button>
+          <button class="mode active" type="button" data-mode="deep" aria-pressed="true">Deep</button>
+          <button class="mode" type="button" data-mode="quick" aria-pressed="false">Quick</button>
+          <button class="mode" type="button" data-mode="exam" aria-pressed="false">Exam Generator</button>
+          <button class="mode" type="button" data-mode="analytics" aria-pressed="false">Analytics</button>
         </div>
         <div class="top-status">
           <span id="aiStatus" class="status-chip">Deterministic Engine</span>
-          <button id="resetButton" class="text-button">Reset Session</button>
+          <button id="resetButton" class="text-button" type="button">Reset Session</button>
         </div>
       </header>
 
       <!-- Welcome Hero Section -->
       <section id="welcome" class="welcome" aria-labelledby="welcomeTitle">
-        <p class="eyebrow">Massive Question Bank & Adaptive Tutor</p>
+        <p class="eyebrow">Curated Question Bank & Adaptive Tutor</p>
         <h1 id="welcomeTitle">Master Engineering by Solving Real Problems.</h1>
-        <p>Explore thousands of structured questions across Electrical, Escalator/Elevator Safety (EN 115 / ASME A17.1), Electronics, and Automation. Learn deeper through transparent feedback, Bloom's taxonomy progression, and automated exam generation.</p>
+        <p>Practice a growing bank of <strong id="questionCountHero">engineering questions</strong> across electrical systems, escalator and elevator safety, and industrial automation. Learn through transparent feedback, Bloom’s taxonomy progression, and focused exam generation.</p>
         <div class="welcome-cards">
           <article>
             <span>01</span>
@@ -74,13 +80,13 @@
           </article>
           <article>
             <span>03</span>
-            <h2>Engineering Standards</h2>
-            <p>Ground learning in EN 115, ASME A17.1, and industrial codes.</p>
+            <h2>Safety-Critical Context</h2>
+            <p>Work through practical safety, maintenance, and troubleshooting scenarios.</p>
           </article>
         </div>
         <div class="welcome-actions">
-          <button id="startButton" class="primary-button">Start Learning <span>→</span></button>
-          <button id="generateExamHeroBtn" class="secondary-button">Generate Practice Exam <span>⚡</span></button>
+          <button id="startButton" class="primary-button" type="button">Start Learning <span aria-hidden="true">→</span></button>
+          <button id="generateExamHeroBtn" class="secondary-button" type="button">Generate Practice Exam <span aria-hidden="true">⚡</span></button>
         </div>
       </section>
 
@@ -88,7 +94,7 @@
       <section id="learning" class="learning hidden" aria-live="polite">
         <div class="progress-row">
           <span id="questionPosition">Question 1 of 14</span>
-          <div class="progress-track"><span id="progressBar"></span></div>
+          <progress id="progressBar" class="progress-track" max="100" value="0">0%</progress>
           <span id="scoreLabel">0 XP</span>
         </div>
 
@@ -106,8 +112,11 @@
             <div id="questionInput" class="question-input"></div>
 
             <div class="action-row">
-              <button id="hintButton" class="secondary-button">Need a hint</button>
-              <button id="submitButton" class="primary-button">Check answer <span>→</span></button>
+              <button id="hintButton" class="secondary-button" type="button">Need a hint</button>
+              <div class="question-actions">
+                <button id="submitButton" class="primary-button" type="button">Check answer <span aria-hidden="true">→</span></button>
+                <button id="nextQuestionButton" class="primary-button hidden" type="button">Next question <span aria-hidden="true">→</span></button>
+              </div>
             </div>
             <p id="hintText" class="hint-text" role="status"></p>
           </article>
@@ -122,7 +131,7 @@
               <div><dt>Streak</dt><dd id="streakLabel">0 answers</dd></div>
               <div><dt>Revision Queue</dt><dd id="revisionLabel">0 concepts</dd></div>
             </dl>
-            <button id="whyButton" class="text-button">Why this question?</button>
+            <button id="whyButton" class="text-button" type="button">Why this question?</button>
           </aside>
         </div>
 
@@ -138,6 +147,10 @@
             <div class="form-row">
               <label for="examDeptSelect">Department</label>
               <select id="examDeptSelect"><option value="">All Departments</option></select>
+            </div>
+            <div class="form-row">
+              <label for="examSubjectSelect">Subject / Module</label>
+              <select id="examSubjectSelect"><option value="">All Subjects</option></select>
             </div>
             <div class="form-row">
               <label for="examBloomSelect">Target Bloom's Level</label>
@@ -167,7 +180,7 @@
                 <option value="30">30 Minutes</option>
               </select>
             </div>
-            <button type="submit" class="primary-button">Generate & Start Exam <span>⚡</span></button>
+            <button id="generateExamButton" type="submit" class="primary-button">Generate & Start Exam <span aria-hidden="true">⚡</span></button>
           </form>
         </div>
 
@@ -177,7 +190,7 @@
               <p id="examTitleLabel" class="eyebrow">Engineering Exam</p>
               <h2 id="examProgressLabel">Question 1 of 10</h2>
             </div>
-            <div class="exam-timer"><span id="timerLabel">15:00</span></div>
+            <div class="exam-timer" role="timer" aria-label="Time remaining"><span id="timerLabel">15:00</span></div>
           </div>
 
           <div class="question-layout">
@@ -186,14 +199,16 @@
                 <div>
                   <p id="examBranch" class="eyebrow">Exam Paper</p>
                   <h1 id="examPrompt">Exam Prompt</h1>
+                  <div id="examQuestionMeta" class="question-meta"></div>
                 </div>
               </div>
               <div id="examQuestionInput" class="question-input"></div>
               <div class="action-row">
-                <button id="examPrevBtn" class="secondary-button">← Previous</button>
-                <button id="examNextBtn" class="secondary-button">Next →</button>
-                <button id="examFinishBtn" class="primary-button">Submit Exam Paper <span>✓</span></button>
+                <button id="examPrevBtn" class="secondary-button" type="button">← Previous</button>
+                <button id="examNextBtn" class="secondary-button" type="button">Next →</button>
+                <button id="examFinishBtn" class="primary-button" type="button">Submit Exam Paper <span aria-hidden="true">✓</span></button>
               </div>
+              <p id="examNotice" class="exam-notice" role="status"></p>
             </article>
 
             <aside class="study-card">
@@ -219,7 +234,12 @@
             </div>
           </div>
 
-          <button id="examBackBtn" class="primary-button" style="margin-top: 20px;">Return to Exam Generator <span>→</span></button>
+          <div class="report-box review-box">
+            <h3>Question Review</h3>
+            <div id="examReviewList" class="exam-review-list"></div>
+          </div>
+
+          <button id="examBackBtn" class="primary-button report-back-button" type="button">Build Another Exam <span aria-hidden="true">→</span></button>
         </div>
       </section>
 
@@ -242,6 +262,7 @@
       </section>
     </main>
   </div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <script type="module" src="/app.js"></script>
 </body>
 </html>

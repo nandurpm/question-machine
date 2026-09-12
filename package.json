@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.mjs",
     "dev": "node server.mjs",
-    "check": "node --check server.mjs && node --check lib/evaluator.mjs && node --check public/app.js",
+    "check": "node --check server.mjs && node --check data/questions.mjs && node --check lib/adaptive.mjs && node --check lib/db.mjs && node --check lib/evaluator.mjs && node --check lib/exam.mjs && node --check lib/taxonomy.mjs && node --check public/app.js",
     "test": "node --test tests/*.test.mjs"
   }
 }

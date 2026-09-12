@@ -5,6 +5,7 @@ import { QuestionBankDB } from '../lib/db.mjs';
 import { selectNextQuestion, calculateMastery, getNextTargetBloom } from '../lib/adaptive.mjs';
 import { generateExam, evaluateExam } from '../lib/exam.mjs';
 import { deterministicEvaluate, validateEvaluation } from '../lib/evaluator.mjs';
+import { resolveTaxonomyFilters } from '../lib/taxonomy.mjs';
 
 test('DB stores questions and validates fields', () => {
   const db = new QuestionBankDB(questions);
@@ -47,21 +48,58 @@ test('Adaptive selection advances Bloom level on high score', () => {
   assert.ok(nextQ);
 });
 
-test('Exam generator creates exam paper and evaluator computes grade', () => {
+test('taxonomy IDs resolve to question-bank names', () => {
+  assert.deepEqual(
+    resolveTaxonomyFilters(departments, { department: 'ELEV', subject: 'ELEV-ESC-ELEC' }),
+    {
+      department: 'Escalator & Elevator Engineering',
+      subject: 'Escalator Electrical & Safety Systems'
+    }
+  );
+});
+
+test('Exam generator honors filters and evaluator counts unanswered questions', () => {
   const db = new QuestionBankDB(questions);
-  const exam = generateExam(db, { department: 'Electrical Engineering', questionCount: 3, timeLimitMinutes: 10 });
+  const filters = resolveTaxonomyFilters(departments, { department: 'ELEV' });
+  const exam = generateExam(db, { ...filters, questionCount: 3, timeLimitMinutes: 10 });
   assert.equal(exam.questions.length, 3);
+  assert.ok(exam.questions.every((question) => question.department === 'Escalator & Elevator Engineering'));
 
   const submission = {
     examId: exam.examId,
+    questionIds: exam.questions.map((question) => question.questionId),
     timeSpentSeconds: 60,
     answers: {
-      [exam.questions[0].questionId]: 'Volt'
+      [exam.questions[0].questionId]: 'intentionally incorrect'
     }
   };
   const report = evaluateExam(db, submission);
-  assert.ok(report.grade);
-  assert.ok(report.totalQuestions >= 1);
+  assert.equal(report.totalQuestions, 3);
+  assert.equal(report.attemptedCount, 1);
+  assert.equal(report.unansweredCount, 2);
+  assert.equal(report.incorrectCount, 3);
+  assert.equal(report.overallPercentage, 0);
+});
+
+test('Exam generator rejects filter combinations with no questions', () => {
+  const db = new QuestionBankDB(questions);
+  assert.throws(
+    () => generateExam(db, { department: 'Electrical Engineering', bloomLevel: 'Create' }),
+    /No questions match/
+  );
+});
+
+test('Exam score denominator includes blank questions', () => {
+  const db = new QuestionBankDB(questions);
+  const report = evaluateExam(db, {
+    examId: 'exam-test',
+    questionIds: ['voltage-unit', 'current-meaning'],
+    answers: { 'voltage-unit': 'Volt' }
+  });
+
+  assert.equal(report.correctCount, 1);
+  assert.equal(report.unansweredCount, 1);
+  assert.equal(report.overallPercentage, 50);
 });
 
 test('Evaluator handles multi-choice, numerical, ordering, and matching', () => {

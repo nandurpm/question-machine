@@ -6,6 +6,7 @@ import { selectNextQuestion } from './lib/adaptive.mjs';
 import { QuestionBankDB } from './lib/db.mjs';
 import { deterministicEvaluate, nvidiaEvaluate } from './lib/evaluator.mjs';
 import { evaluateExam, generateExam } from './lib/exam.mjs';
+import { resolveTaxonomyFilters } from './lib/taxonomy.mjs';
 
 const db = new QuestionBankDB(questions);
 
@@ -19,8 +20,17 @@ const types = {
   '.svg': 'image/svg+xml'
 };
 
+const securityHeaders = {
+  'content-security-policy': "default-src 'self'; base-uri 'none'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'",
+  'permissions-policy': 'camera=(), geolocation=(), microphone=()',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+  'x-content-type-options': 'nosniff',
+  'x-frame-options': 'DENY'
+};
+
 const send = (response, status, body) => {
   response.writeHead(status, {
+    ...securityHeaders,
     'content-type': 'application/json; charset=utf-8',
     'cache-control': 'no-store'
   });
@@ -39,6 +49,13 @@ async function readBody(request) {
 const server = createServer(async (request, response) => {
   const url = new URL(request.url, `http://${request.headers.host || 'localhost'}`);
   try {
+    if (request.method === 'GET' && url.pathname === '/api/health') {
+      return send(response, 200, {
+        status: 'ok',
+        questionCount: db.getAllQuestions().length
+      });
+    }
+
     // Session metadata
     if (request.method === 'GET' && url.pathname === '/api/session') {
       return send(response, 200, {
@@ -56,7 +73,7 @@ const server = createServer(async (request, response) => {
 
     // Question Bank Search & Query
     if (request.method === 'GET' && url.pathname === '/api/questions') {
-      const filters = {
+      const filters = resolveTaxonomyFilters(departments, {
         department: url.searchParams.get('department'),
         subject: url.searchParams.get('subject'),
         topic: url.searchParams.get('topic'),
@@ -67,7 +84,7 @@ const server = createServer(async (request, response) => {
         search: url.searchParams.get('search'),
         limit: Number(url.searchParams.get('limit')) || 20,
         offset: Number(url.searchParams.get('offset')) || 0
-      };
+      });
       const result = db.query(filters);
       return send(response, 200, {
         total: result.total,
@@ -77,8 +94,9 @@ const server = createServer(async (request, response) => {
 
     // Adaptive Next Question Selection
     if (request.method === 'POST' && url.pathname === '/api/questions/next') {
-      const userProfile = await readBody(request);
+      const userProfile = resolveTaxonomyFilters(departments, await readBody(request));
       const nextQ = selectNextQuestion(db, userProfile);
+      if (!nextQ) return send(response, 404, { error: 'No questions match the selected study filters.' });
       return send(response, 200, { question: publicQuestion(nextQ) });
     }
 
@@ -118,9 +136,13 @@ const server = createServer(async (request, response) => {
 
     // Exam Paper Generation
     if (request.method === 'POST' && url.pathname === '/api/exam/generate') {
-      const config = await readBody(request);
-      const examPaper = generateExam(db, config);
-      return send(response, 200, examPaper);
+      const config = resolveTaxonomyFilters(departments, await readBody(request));
+      try {
+        const examPaper = generateExam(db, config);
+        return send(response, 200, examPaper);
+      } catch (error) {
+        return send(response, 400, { error: error.message });
+      }
     }
 
     // Exam Submission & Grading
@@ -137,11 +159,17 @@ const server = createServer(async (request, response) => {
     const pathname = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
     const target = normalize(join(root, pathname));
     if (!target.startsWith(root) || !existsSync(target) || !statSync(target).isFile()) {
-      response.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
+      response.writeHead(404, {
+        ...securityHeaders,
+        'content-type': 'text/plain; charset=utf-8',
+        'cache-control': 'no-store'
+      });
       return response.end('Not found');
     }
     response.writeHead(200, {
+      ...securityHeaders,
       'content-type': types[extname(target)] || 'application/octet-stream',
+      'cache-control': pathname === '/index.html' ? 'no-cache' : 'public, max-age=3600',
       'x-content-type-options': 'nosniff'
     });
     if (request.method === 'HEAD') return response.end();
